@@ -3,6 +3,7 @@ module.exports = module.exports = {
     try {
       router.post('/login', async function (req, res) {
         try {
+          console.log(req.body)
           res.send('login')
         } catch (e) {
           console.log(`login error:${e}`)
@@ -12,9 +13,12 @@ module.exports = module.exports = {
 
       router.post('/registration', async function (req, res) {
         try {
-          res.send('registration')
+          console.log('routs: Initiate registration')
+          const { username, hash } = req.body
+          const result = await controller.registration({ username, hash })
+          res.status(200).send(result)
         } catch (e) {
-          console.log(`registration error:${e}`)
+          console.error(`registration error:${e}`)
           res.status(500).send('Error')
         }
       })
@@ -32,5 +36,5 @@ module.exports = module.exports = {
     }
 
     return router
-  }
+  },
 }

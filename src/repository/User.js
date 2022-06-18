@@ -5,12 +5,14 @@ class UserRepository extends Repository {
     super(config);
   }
 
-  getUser() {
-
+  async getUser({username, id}) {
+    const foundColumn = username ? 'username' : 'id'
+    const value = username || id
+    return await this.query(`SELECT * FROM users WHERE ${foundColumn} = '${value}'`)
   }
 
-  addNewUser() {
-
+  async addNewUser({username, authId}) {
+    return await this.query(`INSERT INTO users (username, auth_client_id) VALUES ('${username}', ${authId});`)
   }
 
   checkUserName() {
