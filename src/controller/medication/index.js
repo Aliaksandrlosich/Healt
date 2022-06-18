@@ -9,7 +9,7 @@ class Medication extends Controller {
 
   }
 
-  viewMedicationList() {
+  getMedicationList({}) {
 
   }
 
@@ -21,7 +21,7 @@ class Medication extends Controller {
 
   }
 
-  viewMedicationDetails() {
+  getMedicationDetails() {
 
   }
 
