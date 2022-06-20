@@ -19,16 +19,18 @@ module.exports = {
           const { username, password } = req.body
           if (password && username) {
             const result = await controller.registration({ username, password })
-            const { statusCode, accessToken, userId, refreshToken } = result
-            const cookieMaxAge = hToS(config.auth.refreshExpiresInHours)
-            res.cookie('refresh-token', refreshToken, { maxAge: cookieMaxAge, httpOnly: true, path: '/auth' })
-            res.status(statusCode).send({ accessToken, userId })
+            const { statusCode, accessToken, userId, refreshToken, error } = result
+            const refreshCookieMaxAge = hToS(config.auth.refreshExpiresInHours)
+            const accessCookieMaxAge = hToS(config.auth.accessExpiresInHours)
+            res.cookie('refresh-token', refreshToken, { maxAge: refreshCookieMaxAge, httpOnly: true, path: '/auth', domain: config.domain })
+            res.cookie('access-token', refreshToken, { maxAge: accessCookieMaxAge, httpOnly: true, path: '/', domain: config.domain })
+            res.status(statusCode).send({ userId, error })
           } else {
             res.status(400).send('All input is required')
           }
         } catch (e) {
           console.error(`registration error:${e}`)
-          res.status(500).send('Error')
+          res.status(500).send({ error: 'Error' })
         }
       })
 

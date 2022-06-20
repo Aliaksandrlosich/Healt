@@ -1,5 +1,6 @@
 {
   "port": 3001,
+  "domain": "localhost",
   "database": {
     "user": "postgres",
     "password": "123456",

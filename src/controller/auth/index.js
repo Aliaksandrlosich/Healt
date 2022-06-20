@@ -32,7 +32,7 @@ class Auth extends Controller {
         }
       } else {
         result = {
-          message: 'NOT_UNIQ_USERNAME',
+          error: 'NOT_UNIQ_USERNAME',
           statusCode: 409
         }
       }
