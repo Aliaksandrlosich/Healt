@@ -8,7 +8,9 @@ class UserRepository extends Repository {
   async getUser({username, id}) {
     const foundColumn = username ? 'username' : 'id'
     const value = username || id
-    return await this.query(`SELECT * FROM users WHERE ${foundColumn} = '${value}'`)
+
+    const user = await this.query(`SELECT * FROM users WHERE ${foundColumn} = '${value}'`)
+    return user.rows?.[0]
   }
 
   async addNewUser({username, authId}) {
