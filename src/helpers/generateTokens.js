@@ -1,4 +1,5 @@
 const crypto = require('crypto')
+const jwt = require('jsonwebtoken')
 
 exports.generateRefreshToken = async () => {
   const buffer = await new Promise((resolve, reject) => {
@@ -14,8 +15,12 @@ exports.generateRefreshToken = async () => {
   return token
 }
 
-exports.generateAccessToken = async (username) => {
-  const bufferData = `{username: ${username}, timestamp: ${Date.now()}}`
-  const buff = await Buffer.from(bufferData)
-  return await buff.toString('base64')
+exports.generateAccessToken = async ({ username, timestamp, tokenKey, accessExpiresInHours }) => {
+  return await jwt.sign(
+    { username: username, timestamp },
+    tokenKey,
+    {
+      expiresIn: `${accessExpiresInHours}h`,
+    },
+  )
 }

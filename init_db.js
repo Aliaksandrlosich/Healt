@@ -26,7 +26,7 @@ function queryDatabase() {
         CREATE TABLE auth_client  (id serial PRIMARY KEY, hash VARCHAR(50), token_id serial);
         ALTER TABLE users ADD CONSTRAINT "FK_auth_id" FOREIGN KEY (auth_client_id) REFERENCES auth_client(id) ON UPDATE CASCADE ON DELETE RESTRICT;
         
-        CREATE TABLE tokens (id serial PRIMARY KEY, access_token VARCHAR(100), refresh_token VARCHAR(100), refresh_expired_time bigint, access_expired_time bigint);
+        CREATE TABLE tokens (id serial PRIMARY KEY, access_token VARCHAR(100), refresh_token VARCHAR(100), refresh_expired_time bigint, access_expired_time bigint, fingerprint VARCHAR(100));
         ALTER TABLE auth_client ADD CONSTRAINT "FK_token_id" FOREIGN KEY (token_id) REFERENCES tokens(id) ON UPDATE CASCADE ON DELETE RESTRICT;
     `;
 

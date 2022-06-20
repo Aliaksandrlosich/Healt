@@ -13,7 +13,7 @@ const app = express()
 app.use(express.json());
 app.use((req, res, next) => cors(req, res, next, methods));
 app.use('/', express.static(__dirname + '/dist'))
-app.use('/auth', initAuthRouts(express.Router(), initAuthController(currentRepository)))
-app.use('/medication', initMedicationRouts(express.Router(), initMedicationController(currentRepository)))
+app.use('/auth', initAuthRouts(express.Router(), initAuthController(currentRepository, config), config))
+app.use('/medication', initMedicationRouts(express.Router(), initMedicationController(currentRepository), config))
 
 app.listen(config.port)

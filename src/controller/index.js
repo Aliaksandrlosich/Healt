@@ -2,7 +2,7 @@ const AuthController = require('./auth/index')
 const MedicationController = require('./medication/index')
 
 module.exports = {
-  initAuthController: (authRepository) => {
+  initAuthController: (authRepository, config) => {
     return new AuthController(authRepository)
   },
   initMedicationController: (medicationRepository) => {

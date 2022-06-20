@@ -12,7 +12,8 @@ class UserRepository extends Repository {
   }
 
   async addNewUser({username, authId}) {
-    return await this.query(`INSERT INTO users (username, auth_client_id) VALUES ('${username}', ${authId});`)
+    const newUser = await this.query(`INSERT INTO users (username, auth_client_id) VALUES ('${username}', ${authId}) RETURNING id;`)
+    return { userId: newUser.rows[0].id }
   }
 
   checkUserName() {

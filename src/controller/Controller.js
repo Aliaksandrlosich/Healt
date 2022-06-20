@@ -1,6 +1,7 @@
 class Controller {
-  constructor (repository) {
+  constructor (repository, config) {
     this.repository = repository
+    this.config = config
   }
 }
 

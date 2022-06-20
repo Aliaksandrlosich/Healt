@@ -12,7 +12,7 @@ class AuthRepository extends Repository {
     const tokenId = newTokens.rows[0].id
     const newAuthClient = await this.query(`INSERT INTO auth_client (hash, token_id) VALUES ('${hash}', ${tokenId}) RETURNING id;`);
 
-    return { authId: newTokens.rows[0].id }
+    return { authId: newAuthClient.rows[0].id, accessToken, refreshToken }
   }
 
   getCred () {
