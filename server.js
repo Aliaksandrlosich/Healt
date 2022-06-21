@@ -13,7 +13,7 @@ const app = express()
 
 app.use(express.json());
 app.use((req, res, next) => cors(req, res, next, methods));
-app.use(cookieParser());
+app.use(cookieParser("secret"));
 app.use('/', express.static(__dirname + '/dist'))
 app.use('/api/auth', initAuthRouts(express.Router(), initAuthController(currentRepository, config), config))
 app.use('/api/medication', initMedicationRouts(express.Router(), initMedicationController(currentRepository), config))

@@ -23,11 +23,11 @@ function queryDatabase() {
         ALTER TABLE medication ADD CONSTRAINT "FK_user_id" FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT;
         CREATE INDEX IF NOT EXISTS "fki_FK_user_id" ON medication(id, user_id);
         
-        CREATE TABLE auth_client  (id serial PRIMARY KEY, hash VARCHAR(100), token_id serial);
+        CREATE TABLE auth_client  (id serial PRIMARY KEY, hash VARCHAR(100));
         ALTER TABLE users ADD CONSTRAINT "FK_auth_id" FOREIGN KEY (auth_client_id) REFERENCES auth_client(id) ON UPDATE CASCADE ON DELETE RESTRICT;
         
-        CREATE TABLE tokens (id serial PRIMARY KEY, access_token VARCHAR(200), refresh_token VARCHAR(200), refresh_expired_time bigint, access_expired_time bigint, fingerprint VARCHAR(100));
-        ALTER TABLE auth_client ADD CONSTRAINT "FK_token_id" FOREIGN KEY (token_id) REFERENCES tokens(id) ON UPDATE CASCADE ON DELETE RESTRICT;
+        CREATE TABLE tokens (id serial PRIMARY KEY, auth_client_id serial, access_token VARCHAR(200), refresh_token VARCHAR(200), refresh_expired_time bigint, access_expired_time bigint, fingerprint VARCHAR(100));
+        ALTER TABLE tokens ADD CONSTRAINT "FK_auth_id" FOREIGN KEY (auth_client_id) REFERENCES auth_client(id) ON UPDATE CASCADE ON DELETE RESTRICT;
     `;
 
   client

@@ -20,16 +20,16 @@ class Auth extends Controller {
         }
       } else {
         const encryptedPassword = await bcrypt.hash(password, 1)
-        const accessExpiredTime = Date.now() + hToMs(this.config.auth.accessExpiresInHours)
-        const refreshExpiredTime = Date.now() + hToMs(this.config.auth.refreshExpiresInHours)
+        const accessExpiredTime = this.#getAccessExpiredTime()
+        const refreshExpiredTime = this.#getRefreshExpiredTime()
         const generatedTokens = await this.#generateTokens({ username, accessExpiredTime, refreshExpiredTime })
-        const { refreshToken, accessToken, authId } = await this.repository.auth.addNewCred({
+        const { refreshToken, accessToken, authId } = await this.repository.auth.addCred({
           hash: encryptedPassword, accessExpiredTime, refreshExpiredTime, ...generatedTokens,
         })
         const { userId } = await this.repository.user.addNewUser({ username, authId })
         result = {
           message: 'SUCCESS',
-          statusCode: 200,
+          statusCode: 201,
           userId,
           refreshToken,
           accessToken,
@@ -43,6 +43,15 @@ class Auth extends Controller {
       throw e
     }
   }
+
+  #getAccessExpiredTime() {
+    return Date.now() + hToMs(this.config.auth.accessExpiresInHours)
+  }
+
+  #getRefreshExpiredTime() {
+    return Date.now() + hToMs(this.config.auth.refreshExpiresInHours)
+  }
+
 
   async #generateTokens ({ username, accessExpiredTime, refreshExpiredTime }) {
     const accessToken = await generateAccessToken({
@@ -59,35 +68,59 @@ class Auth extends Controller {
   async authorization ({ username, password }) {
     const user = await this.repository.user.getUser({ username })
     let result = { message: '' }
-    const userEmpty = user.rows.length === 0
-    if (userEmpty) {
+    if (user) {
+      const userAuth = await this.repository.auth.getCred({ authId: user.auth_client_id })
+      const validCred = await bcrypt.compare(password, userAuth.hash)
+      if(validCred) {
+        const accessExpiredTime = this.#getAccessExpiredTime()
+        const refreshExpiredTime = this.#getRefreshExpiredTime()
+        const generatedTokens = await this.#generateTokens({ username, accessExpiredTime, refreshExpiredTime })
+        await this.repository.auth.addToken({ authId: userAuth.id, refreshExpiredTime, accessExpiredTime, ...generatedTokens })
+
+        result = {
+          message: 'SUCCESS',
+          statusCode: 200,
+          userId: user.id,
+          ...generatedTokens
+        }
+      } else {
+        result = {
+          error: 'INVALID_CREDENTIALS',
+          statusCode: 400,
+        }
+      }
+    } else {
       result = {
         error: 'INVALID_CREDENTIALS',
         statusCode: 400,
       }
-    } else {
-      console.log(user)
     }
     return result
   }
 
-  async logout ({ userId }) {
-    let result
-    const user = await this.repository.user.getUser({ id: userId })
-    const { auth_client_id } = user
-    await this.repository.auth.resetCred({ auth_client_id })
-    if (user) {
-      result = {
-        message: 'SUCCESS',
-        statusCode: 200,
+  async logout ({ userId, accessToken }) {
+    try{
+      let result
+      const user = await this.repository.user.getUser({ id: userId })
+      if (user) {
+        const { auth_client_id } = user
+        await this.repository.auth.resetToken({ authId: auth_client_id, accessToken })
+        result = {
+          message: 'SUCCESS',
+          statusCode: 200,
+        }
+      } else {
+        result = {
+          message: 'UNDEFINED_USER',
+          statusCode: 200,
+        }
       }
-    } else {
-      result = {
-        message: 'UNDEFINED_USER',
-        statusCode: 200,
-      }
+      return result
+    } catch (e) {
+      console.error('Auth authorization error')
+      console.error(e.stack)
+      throw e
     }
-    return result
   }
 }
 

@@ -1,7 +1,10 @@
+const cookie = require('cookie')
 const { hToS } = require('../../helpers/time')
 
 module.exports = {
   init: (router, controller, config) => {
+    const refreshCookieMaxAge = hToS(config.auth.refreshExpiresInHours)
+    const accessCookieMaxAge = hToS(config.auth.accessExpiresInHours)
     try {
       router.post('/login', async function (req, res) {
         try {
@@ -9,14 +12,23 @@ module.exports = {
           const { username, password } = req.body
           if (password && username) {
             const result = await controller.authorization({ username, password })
-            res.status(result.statusCode).send({ error: result.error })
+            const { userId, statusCode, error, message, accessToken, refreshToken } = result
+            if (statusCode === 200) {
+              res.setHeader('Set-Cookie', [
+                cookie.serialize('refreshToken', refreshToken,
+                  { maxAge: refreshCookieMaxAge, httpOnly: true, path: '/api', domain: config.domain }),
+                cookie.serialize('accessToken', accessToken,
+                  { maxAge: accessCookieMaxAge, httpOnly: true, path: '/api', domain: config.domain }),
+              ])
+            }
+
+            res.status(result.statusCode).json({ userId, error, message })
           } else {
-            res.status(400).send({ error: 'All input is required' })
+            res.status(400).send({ error: 'INVALID_CREDENTIALS' })
           }
-          res.send('login')
         } catch (e) {
           console.log(`login error:${e}`)
-          res.status(500).send('Error')
+          res.status(500).send({ error: 'Error' })
         }
       })
 
@@ -26,16 +38,18 @@ module.exports = {
           const { username, password } = req.body
           if (password && username) {
             const result = await controller.registration({ username, password })
-            const { statusCode, accessToken, userId, refreshToken, error } = result
-            const refreshCookieMaxAge = hToS(config.auth.refreshExpiresInHours)
-            const accessCookieMaxAge = hToS(config.auth.accessExpiresInHours)
-            res.cookie('access-token', accessToken,
-              { maxAge: accessCookieMaxAge, httpOnly: true, path: '/api', domain: config.domain })
-            res.cookie('refresh-token', refreshToken,
-              { maxAge: refreshCookieMaxAge, httpOnly: true, path: '/api/auth', domain: config.domain })
-            res.status(statusCode).send({ userId, error })
+            const { statusCode, accessToken, userId, refreshToken, error, message } = result
+            if (statusCode === 200) {
+              res.setHeader('Set-Cookie', [
+                cookie.serialize('refreshToken', refreshToken,
+                  { maxAge: refreshCookieMaxAge, httpOnly: true, path: '/api', domain: config.domain }),
+                cookie.serialize('accessToken', accessToken,
+                  { maxAge: accessCookieMaxAge, httpOnly: true, path: '/api', domain: config.domain }),
+              ])
+            }
+            res.status(statusCode).json({ userId, error, message })
           } else {
-            res.status(400).send('All input is required')
+            res.status(400).send('INVALID_CREDENTIALS')
           }
         } catch (e) {
           console.error(`registration error:${e.stack}`)
@@ -47,12 +61,12 @@ module.exports = {
         try {
           console.log('routs: Initiate logout')
           const { userId } = req.body
-          console.log(req.body)
-          res.cookie('access-token', '', { maxAge: 0, httpOnly: true })
-          res.cookie('refresh-token', '', { maxAge: 0, httpOnly: true })
+          const accessToken = req.cookies?.['accessToken']
+          await res.clearCookie('refreshToken', { maxAge: 0, httpOnly: true, path: '/api', domain: config.domain })
+          await res.clearCookie('accessToken', { maxAge: 0, httpOnly: true, path: '/api', domain: config.domain })
 
-          const result = await controller.logout({ userId })
-          res.status(result.statusCode).send({ message: result.message })
+          const { statusCode, message } = await controller.logout({ userId, accessToken })
+          res.status(statusCode).send({ message })
         } catch (e) {
           console.log(`logout error:${e.stack}`)
           res.status(500).send({ error: 'Error' })
