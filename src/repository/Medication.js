@@ -1,33 +1,36 @@
 const Repository = require('./Repository')
 
 class MedicationRepository extends Repository {
-  constructor (config) {
-    super(config);
-  }
+ constructor (config) {
+  super(config)
+ }
 
-  addMedicationToList() {
+ async addMedicationToList ({ name, description, initCount, destinationCount, userId }) {
+  const newMedication = await this.query(`INSERT INTO medication (name, description, initial_count, destination_count, user_id) 
+    VALUES ('${name}', '${description}', ${initCount}, ${destinationCount}, '${userId}') RETURNING id;`)
 
-  }
+  return newMedication.rows[0]
+ }
 
-  viewMedicationList() {
+ viewMedicationList () {
 
-  }
+ }
 
-  incrementMedicationCount() {
+ incrementMedicationCount () {
 
-  }
+ }
 
-  decrementMedicationCount() {
+ decrementMedicationCount () {
 
-  }
+ }
 
-  viewMedicationDetails() {
+ viewMedicationDetails () {
 
-  }
+ }
 
-  deleteMedication() {
+ deleteMedication () {
 
-  }
+ }
 
 }
 

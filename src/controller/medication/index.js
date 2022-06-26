@@ -1,33 +1,37 @@
 const Controller = require('../Controller')
 
 class Medications extends Controller {
-  constructor (repository) {
-    super(repository)
-  }
+ constructor (repository) {
+  super(repository)
+ }
 
-  addMedicationToList() {
+ async addMedicationToList ({ name, description, initCount = 0, destinationCount = 0, userId }) {
+  const medication = await this.repository.medication.addMedicationToList({
+   name, description, initCount, destinationCount, userId
+  })
 
-  }
+  return { statusCode: 200, medicationId: medication.id, message: 'SUCCESS' }
+ }
 
-  getMedicationList({}) {
+ getMedicationList ({}) {
 
-  }
+ }
 
-  incrementMedicationCount() {
+ incrementMedicationCount () {
 
-  }
+ }
 
-  decrementMedicationCount() {
+ decrementMedicationCount () {
 
-  }
+ }
 
-  getMedicationDetails() {
+ getMedicationDetails () {
 
-  }
+ }
 
-  deleteMedication() {
+ deleteMedication () {
 
-  }
+ }
 }
 
 module.exports = Medications
