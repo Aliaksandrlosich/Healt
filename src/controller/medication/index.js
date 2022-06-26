@@ -13,8 +13,10 @@ class Medications extends Controller {
   return { statusCode: 200, medicationId: medication.id, message: 'SUCCESS' }
  }
 
- getMedicationList ({}) {
+ async getMedicationsList ({ userId }) {
+  const medicationsList = await this.repository.medication.getMedicationsList({ userId })
 
+  return { statusCode: 200, message: 'SUCCESS', medications: medicationsList }
  }
 
  incrementMedicationCount () {

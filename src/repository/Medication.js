@@ -12,7 +12,11 @@ class MedicationRepository extends Repository {
   return newMedication.rows[0]
  }
 
- viewMedicationList () {
+ async getMedicationsList ({ userId }) {
+  const medicationsList = await this.query(`SELECT name, description, initial_count as initCount, 
+        destination_count as destinationCount, id FROM medication WHERE user_id='${userId}';`)
+
+  return medicationsList.rows
 
  }
 
