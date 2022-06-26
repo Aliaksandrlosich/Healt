@@ -3,9 +3,9 @@ const { hToS } = require('../../helpers/time')
 
 module.exports = {
   init: (router, controller, config) => {
-    const refreshCookieMaxAge = hToS(config.auth.refreshExpiresInHours)
-    const accessCookieMaxAge = hToS(config.auth.accessExpiresInHours)
     try {
+     const refreshCookieMaxAge = hToS(config.auth.refreshExpiresInHours)
+     const accessCookieMaxAge = hToS(config.auth.accessExpiresInHours)
       router.post('/login', async function (req, res) {
         try {
           console.log('routs: Initiate login')
@@ -73,7 +73,7 @@ module.exports = {
         }
       })
     } catch (e) {
-      console.error('Error init auth router')
+      console.error('Error init auth routers')
     }
 
     return router

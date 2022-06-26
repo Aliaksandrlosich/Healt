@@ -1,7 +1,9 @@
 const AuthRouts = require('./auth/index')
-const MedicationRouts = require('./medication/index')
+const MedicationsRouts = require('./medication/index')
+const UsersRouts = require('./users/index')
 
 module.exports = {
   initAuthRouts: AuthRouts.init,
-  initMedicationRouts: MedicationRouts.init
+  initMedicationsRouts: MedicationsRouts.init,
+  initUsersRouts:  UsersRouts.init
 }

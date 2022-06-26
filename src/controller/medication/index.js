@@ -1,6 +1,6 @@
 const Controller = require('../Controller')
 
-class Medication extends Controller {
+class Medications extends Controller {
   constructor (repository) {
     super(repository)
   }
@@ -30,4 +30,4 @@ class Medication extends Controller {
   }
 }
 
-module.exports = Medication
+module.exports = Medications
