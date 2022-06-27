@@ -5,10 +5,10 @@ module.exports = {
     try {
      console.log('get user')
      const { userId } = req.params
-     const result = await controller.getUser({userId})
+     const result = await controller.getUser({ userId })
      const { statusCode, error, message, username } = result
-     console.log(statusCode)
-     res.status(statusCode).send({ message, username, error, userId  })
+
+     res.status(statusCode).send({ message, username, error, userId })
     } catch (e) {
      console.log(`getUser error:${e.stack}`)
      res.status(500).send({ error: 'Error' })

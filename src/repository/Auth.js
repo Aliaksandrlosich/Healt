@@ -1,35 +1,47 @@
 const Repository = require('./Repository')
 
 class AuthRepository extends Repository {
-  constructor (config) {
-    super(config)
-  }
+ constructor (config) {
+  super(config)
+ }
 
-  async addCred ({ hash, accessToken, refreshToken, refreshExpiredTime, accessExpiredTime }) {
-    const newAuthClient = await this.query(`INSERT INTO auth_client (hash) VALUES ('${hash}') RETURNING id;`)
-    const authId = newAuthClient.rows[0].id
-    const newTokens = await this.query(`INSERT INTO tokens (auth_client_id, access_token, refresh_token, refresh_expired_time, access_expired_time) 
+ async addCred ({ hash }) {
+  const newAuthClient = await this.query(`INSERT INTO auth_client (hash) VALUES ('${hash}') RETURNING id;`)
+
+  return newAuthClient.rows[0].id
+ }
+
+ async getCred ({ authId }) {
+  const authCred = await this.query(`SELECT * FROM auth_client WHERE id='${authId}'`)
+
+  return authCred.rows[0]
+ }
+
+ async addToken ({ authId, accessToken, refreshToken, refreshExpiredTime, accessExpiredTime }) {
+  const newTokens = await this.query(`INSERT INTO tokens (auth_client_id, access_token, refresh_token, refresh_expired_time, access_expired_time)
                      VALUES (${authId}, '${accessToken}', '${refreshToken}', ${refreshExpiredTime}, ${accessExpiredTime}) RETURNING id;`)
+  return true
+ }
 
-    return { authId, accessToken, refreshToken }
-  }
+ async resetToken ({ authId, accessToken }) {
+  const reset = await this.query(`DELETE FROM  tokens WHERE auth_client_id = ${authId} 
+    AND  access_token = '${accessToken}';`)
+  return true
+ }
 
-  async getCred ({ authId }) {
-    const authCred = await this.query(`SELECT * FROM auth_client WHERE id='${authId}'`)
+ async checkAccessToken ({ accessToken, currentTimestamp }) {
+  const tokens = await this.query(`SELECT * FROM tokens WHERE access_token = '${accessToken}' 
+        AND access_expired_time > ${currentTimestamp};`)
 
-    return authCred.rows[0]
-  }
+  return tokens.rows[0]
+ }
 
-  async addToken ({ authId, accessToken, refreshToken, refreshExpiredTime, accessExpiredTime }) {
-    const newTokens = await this.query(`INSERT INTO tokens (auth_client_id, access_token, refresh_token, refresh_expired_time, access_expired_time)
-                     VALUES (${authId}, '${accessToken}', '${refreshToken}', ${refreshExpiredTime}, ${accessExpiredTime}) RETURNING id;`)
-    return true
-  }
+ async checkRefreshToken ({ accessToken, refreshToken, currentTimestamp }) {
+  const tokens = await this.query(`SELECT * FROM tokens WHERE access_token = '${accessToken}' 
+        AND refresh_token = '${refreshToken}' AND access_expired_time < ${currentTimestamp} AND refresh_expired_time > ${currentTimestamp};`)
 
-  async resetToken ({ authId, accessToken }) {
-    const reset = await this.query(`DELETE FROM  tokens WHERE auth_client_id = ${authId} AND  access_token = '${accessToken}';`)
-    return true
-  }
+  return tokens.rows[0]
+ }
 
 }
 

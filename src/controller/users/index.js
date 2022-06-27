@@ -8,7 +8,7 @@ class Users extends Controller {
  async getUser ({ userId }) {
   try {
    let result
-   const user = await this.repository.user.getUser({ id: userId })
+   const user = await this.repository.user.getUser({ key: 'id', value: userId })
    if (user) {
     const { username } = user
     result = {
