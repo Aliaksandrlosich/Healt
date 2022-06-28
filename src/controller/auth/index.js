@@ -108,7 +108,6 @@ class Auth extends Controller {
   const checkedAccessToken = !!accessToken && await this.repository.auth.checkAccessToken({
    accessToken, currentTimestamp
   })
-  console.log(checkedAccessToken)
   if (checkedAccessToken) {
    return { access: true }
   } else {

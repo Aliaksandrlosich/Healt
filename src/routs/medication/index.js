@@ -19,7 +19,7 @@ module.exports = {
     }
    })
 
-   router.post('', async function (req, res) {
+   router.post('/', async function (req, res) {
     try {
      console.log('Add new medication')
      const { userId, name, description, initCount, destinationCount } = req.body
@@ -47,7 +47,13 @@ module.exports = {
 
    router.patch('/:medicationId', async function (req, res) {
     try {
-     res.send('change medication')
+     console.log('Update medication')
+     const { medicationId } = req.params
+     const { name, description, initCount, destinationCount } = req.body
+     const result = await controller.updateMedication({ medicationId, name, description, initCount, destinationCount })
+     const {statusCode, message, error} = result
+
+     res.status(statusCode).send({message, error})
     } catch (e) {
      console.log(`change medication:${e}`)
      res.status(500).send('Error')

@@ -20,6 +20,14 @@ class MedicationRepository extends Repository {
 
  }
 
+ async updateMedication({ medicationId, name, description, initCount, destinationCount }) {
+  const medication = await this.query(`UPDATE medication
+            SET name = '${name}', description = '${description}', initial_count = ${initCount}, destination_count = ${destinationCount}
+            WHERE id = ${medicationId} RETURNING id;`)
+
+  return medication.rows[0]
+ }
+
  incrementMedicationCount () {
 
  }

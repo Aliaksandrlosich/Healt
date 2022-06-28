@@ -7,7 +7,6 @@ const auth = (authController) => async (req, res, next) => {
  if (cookies.accessToken || cookies.refreshToken) {
   const { accessToken, refreshToken } = cookies
   const result = await authController.checkAuthorization({ accessToken, refreshToken })
-  console.log(result)
   if (result.access) {
    if (result.accessToken) {
     const refreshCookieMaxAge = hToS(authController.config.auth.refreshExpiresInHours)

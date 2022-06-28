@@ -19,6 +19,16 @@ class Medications extends Controller {
   return { statusCode: 200, message: 'SUCCESS', medications: medicationsList }
  }
 
+ async updateMedication ({ medicationId, name, description, initCount, destinationCount }) {
+  const medication = await this.repository.medication.updateMedication({ medicationId, name, description, initCount, destinationCount })
+  if(medication) {
+   return { statusCode: 200, message: 'SUCCESS' }
+  } else {
+   return { statusCode: 400, error: 'UNKNOWN_ID' }
+  }
+
+ }
+
  incrementMedicationCount () {
 
  }
