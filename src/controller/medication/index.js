@@ -20,8 +20,14 @@ class Medications extends Controller {
  }
 
  async updateMedication ({ medicationId, name, description, initCount, destinationCount }) {
-  const medication = await this.repository.medication.updateMedication({ medicationId, name, description, initCount, destinationCount })
-  if(medication) {
+  const medication = await this.repository.medication.updateMedication({
+   medicationId,
+   name,
+   description,
+   initCount,
+   destinationCount
+  })
+  if (medication) {
    return { statusCode: 200, message: 'SUCCESS' }
   } else {
    return { statusCode: 400, error: 'UNKNOWN_ID' }
@@ -41,8 +47,10 @@ class Medications extends Controller {
 
  }
 
- deleteMedication () {
+ async deleteMedication ({ medicationId }) {
+  const result = await this.repository.medication.deleteMedication({ medicationId })
 
+  return { statusCode: 200, message: 'SUCCESS' }
  }
 }
 

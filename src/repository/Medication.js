@@ -20,7 +20,7 @@ class MedicationRepository extends Repository {
 
  }
 
- async updateMedication({ medicationId, name, description, initCount, destinationCount }) {
+ async updateMedication ({ medicationId, name, description, initCount, destinationCount }) {
   const medication = await this.query(`UPDATE medication
             SET name = '${name}', description = '${description}', initial_count = ${initCount}, destination_count = ${destinationCount}
             WHERE id = ${medicationId} RETURNING id;`)
@@ -40,8 +40,10 @@ class MedicationRepository extends Repository {
 
  }
 
- deleteMedication () {
+ async deleteMedication ({ medicationId }) {
+  const medication = await this.query(`DELETE FROM  medication WHERE id = ${medicationId};`)
 
+  return medication.rows[0]
  }
 
 }

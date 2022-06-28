@@ -51,9 +51,9 @@ module.exports = {
      const { medicationId } = req.params
      const { name, description, initCount, destinationCount } = req.body
      const result = await controller.updateMedication({ medicationId, name, description, initCount, destinationCount })
-     const {statusCode, message, error} = result
+     const { statusCode, message, error } = result
 
-     res.status(statusCode).send({message, error})
+     res.status(statusCode).send({ message, error })
     } catch (e) {
      console.log(`change medication:${e}`)
      res.status(500).send('Error')
@@ -62,9 +62,14 @@ module.exports = {
 
    router.delete('/:medicationId', async function (req, res) {
     try {
-     res.send('delete medication')
+     console.log('delete medication')
+     const { medicationId } = req.params
+     const result = await controller.deleteMedication({ medicationId })
+     const { statusCode, message, error } = result
+
+     res.status(statusCode).send({ message, error })
     } catch (e) {
-     console.log(`delete new:${e}`)
+     console.log(`delete medication error:${e}`)
      res.status(500).send('Error')
     }
    })
