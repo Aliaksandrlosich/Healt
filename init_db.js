@@ -18,8 +18,8 @@ function queryDatabase() {
         DROP TABLE IF EXISTS auth_client CASCADE ;
         DROP TABLE IF EXISTS tokens CASCADE ;
         
-        CREATE TABLE users  (id serial PRIMARY KEY, username VARCHAR(100), auth_client_id serial);
-        CREATE TABLE medication  (id serial PRIMARY KEY, user_id serial, name VARCHAR(100), description text,initial_count INTEGER, destination_count INTEGER, updated_date timestamp DEFAULT NOW());
+        CREATE TABLE users  (id serial PRIMARY KEY, username VARCHAR(300), auth_client_id serial);
+        CREATE TABLE medication  (id serial PRIMARY KEY, user_id serial, name VARCHAR(300), description text,initial_count INTEGER, destination_count INTEGER, updated_date timestamp DEFAULT NOW());
         ALTER TABLE medication ADD CONSTRAINT "FK_user_id" FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT;
         CREATE INDEX IF NOT EXISTS "fki_FK_user_id" ON medication(id, user_id);
         
