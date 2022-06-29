@@ -1,8 +1,8 @@
-class Controller {
+class Domain {
   constructor (repository, config) {
     this.repository = repository
     this.config = config
   }
 }
 
-module.exports = Controller;
+module.exports = Domain;

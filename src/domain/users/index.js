@@ -1,6 +1,6 @@
-const Controller = require('../Controller')
+const Domain = require('../Domain')
 
-class Users extends Controller {
+class Users extends Domain {
  constructor (repository, config) {
   super(repository, config)
  }

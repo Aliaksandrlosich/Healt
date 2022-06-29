@@ -1,9 +1,9 @@
 const bcrypt = require('bcrypt')
-const Controller = require('../Controller')
+const Domain = require('../Domain')
 const { generateRefreshToken, generateAccessToken } = require('../../helpers/generateTokens')
 const { hToMs } = require('../../helpers/time')
 
-class Auth extends Controller {
+class Auth extends Domain {
  constructor (repository, config) {
   super(repository, config)
  }
