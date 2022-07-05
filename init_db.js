@@ -18,15 +18,15 @@ function queryDatabase() {
         DROP TABLE IF EXISTS auth_client CASCADE ;
         DROP TABLE IF EXISTS tokens CASCADE ;
         
-        CREATE TABLE users  (id serial PRIMARY KEY, username VARCHAR(300), auth_client_id serial);
-        CREATE TABLE medication  (id serial PRIMARY KEY, user_id serial, name VARCHAR(300), description text,initial_count INTEGER, destination_count INTEGER, updated_date timestamp DEFAULT NOW());
+        CREATE TABLE users  (id serial PRIMARY KEY, username VARCHAR, auth_client_id serial);
+        CREATE TABLE medication  (id serial PRIMARY KEY, user_id serial, name VARCHAR, description text,initial_count INTEGER, destination_count INTEGER, updated_date timestamp DEFAULT NOW());
         ALTER TABLE medication ADD CONSTRAINT "FK_user_id" FOREIGN KEY (user_id) REFERENCES users(id) ON UPDATE CASCADE ON DELETE RESTRICT;
         CREATE INDEX IF NOT EXISTS "fki_FK_user_id" ON medication(id, user_id);
         
-        CREATE TABLE auth_client  (id serial PRIMARY KEY, hash VARCHAR(100));
+        CREATE TABLE auth_client  (id serial PRIMARY KEY, hash VARCHAR);
         ALTER TABLE users ADD CONSTRAINT "FK_auth_id" FOREIGN KEY (auth_client_id) REFERENCES auth_client(id) ON UPDATE CASCADE ON DELETE RESTRICT;
         
-        CREATE TABLE tokens (id serial PRIMARY KEY, auth_client_id serial, access_token VARCHAR(200), refresh_token VARCHAR(200), refresh_expired_time bigint, access_expired_time bigint, fingerprint VARCHAR(100));
+        CREATE TABLE tokens (id serial PRIMARY KEY, auth_client_id serial, access_token VARCHAR, refresh_token VARCHAR, refresh_expired_time bigint, access_expired_time bigint, fingerprint VARCHAR);
         ALTER TABLE tokens ADD CONSTRAINT "FK_auth_id" FOREIGN KEY (auth_client_id) REFERENCES auth_client(id) ON UPDATE CASCADE ON DELETE RESTRICT;
     `;
 
